@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Classe singleton pour gérer le pool de connexions MySQL.
+ * Classe singleton pour gérer les connexions MySQL.
  * Utilise les variables d'environnement pour la configuration de la base de données.
  */
 public class DatabaseConnection {
@@ -67,12 +67,9 @@ public class DatabaseConnection {
      */
     public Connection getConnection() throws SQLException {
         try {
-            Connection conn = DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
-            return conn;
+            return DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
         } catch (SQLException e) {
             System.err.println("Erreur lors de la connexion à la base de données");
-            System.err.println("URL: " + jdbcUrl);
-            System.err.println("User: " + dbUser);
             throw e;
         }
     }
