@@ -172,4 +172,32 @@ public class XmlService {
         validateXmlAgainstXsd(xml, xsdPath);
         return unmarshal(xml, clazz);
     }
+    
+    /**
+     * Convertir un objet Meal en XML
+     * Methode helper pour faciliter l'utilisation
+     */
+    public String marshalMeal(com.canteen.menu.models.Meal meal) throws JAXBException {
+        return marshal(meal, com.canteen.menu.models.Meal.class);
+    }
+    
+    /**
+     * Convertir une liste de Meal en XML
+     * Methode helper pour faciliter l'utilisation
+     */
+    public String marshalMealList(java.util.List<com.canteen.menu.models.Meal> meals) throws JAXBException {
+        com.canteen.menu.models.MealList mealList = new com.canteen.menu.models.MealList();
+        mealList.setMeals(meals);
+        return marshal(mealList, com.canteen.menu.models.MealList.class);
+    }
+    
+    /**
+     * Convertir un XML en objet Meal
+     * Methode helper pour faciliter l'utilisation
+     */
+    public com.canteen.menu.models.Meal unmarshalMeal(java.io.Reader reader) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(com.canteen.menu.models.Meal.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        return (com.canteen.menu.models.Meal) unmarshaller.unmarshal(reader);
+    }
 }

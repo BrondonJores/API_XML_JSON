@@ -107,6 +107,36 @@ public class MealDAO {
     }
     
     /**
+     * Recuperer les plats disponibles pour une date donnee
+     * @param date Date pour laquelle recuperer les plats
+     * @return Liste des plats disponibles a cette date
+     * @throws SQLException En cas d'erreur SQL
+     */
+    public List<Meal> getMealsByDate(java.time.LocalDate date) throws SQLException {
+        List<Meal> meals = new ArrayList<>();
+        String sql = "SELECT m.*, c.name as category_name, " +
+                    "n.calories, n.protein, n.carbs, n.fat, n.fiber, n.sodium " +
+                    "FROM meals m " +
+                    "LEFT JOIN categories c ON m.category_id = c.id " +
+                    "LEFT JOIN nutritional_info n ON m.id = n.meal_id " +
+                    "WHERE m.available = true " +
+                    "ORDER BY m.category_id, m.id";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Meal meal = extractMealFromResultSet(rs);
+                loadAllergens(meal, conn);
+                meals.add(meal);
+            }
+        }
+        
+        return meals;
+    }
+    
+    /**
      * Creer un nouveau plat
      * @param meal Le plat a creer
      * @return Le plat cree avec son identifiant genere

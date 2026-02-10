@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+    
+    <display-name>Service Menu Cantine</display-name>
+    <description>Service de gestion des menus de la cantine avec support XML et JSON</description>
+    
+    <!-- Configuration du filtre CORS -->
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.canteen.menu.filters.CorsFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- Configuration de l'encodage UTF-8 -->
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.canteen.menu.filters.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- Servlet MealServlet -->
+    <servlet>
+        <servlet-name>MealServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.MealServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>MealServlet</servlet-name>
+        <url-pattern>/api/meals/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet CategoryServlet -->
+    <servlet>
+        <servlet-name>CategoryServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.CategoryServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>CategoryServlet</servlet-name>
+        <url-pattern>/api/categories</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>CategoryServlet</servlet-name>
+        <url-pattern>/api/categories/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>CategoryServlet</servlet-name>
+        <url-pattern>/api/meals/category/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet MenuServlet -->
+    <servlet>
+        <servlet-name>MenuServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.MenuServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>MenuServlet</servlet-name>
+        <url-pattern>/api/menu/today</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet XmlExportServlet -->
+    <servlet>
+        <servlet-name>XmlExportServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.XmlExportServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>XmlExportServlet</servlet-name>
+        <url-pattern>/api/meals/export/xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>XmlExportServlet</servlet-name>
+        <url-pattern>/api/meals/export/json</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet XmlValidationServlet -->
+    <servlet>
+        <servlet-name>XmlValidationServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.XmlValidationServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>XmlValidationServlet</servlet-name>
+        <url-pattern>/api/validate/xml</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet XsltTransformServlet -->
+    <servlet>
+        <servlet-name>XsltTransformServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.XsltTransformServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>XsltTransformServlet</servlet-name>
+        <url-pattern>/api/transform/menu-to-html</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>XsltTransformServlet</servlet-name>
+        <url-pattern>/api/transform/meal-to-pdf</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet HealthCheckServlet -->
+    <servlet>
+        <servlet-name>HealthCheckServlet</servlet-name>
+        <servlet-class>com.canteen.menu.servlets.HealthCheckServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>HealthCheckServlet</servlet-name>
+        <url-pattern>/api/health</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Page d'accueil -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+    <!-- Gestion des erreurs -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404.html</location>
+    </error-page>
+    
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error/500.html</location>
+    </error-page>
+    
+    <!-- Configuration de la session -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+    </session-config>
+    
+</web-app>

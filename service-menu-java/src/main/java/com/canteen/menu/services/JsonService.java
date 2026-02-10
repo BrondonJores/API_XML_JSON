@@ -118,4 +118,12 @@ public class JsonService {
     public Gson getGsonPretty() {
         return gsonPretty;
     }
+    
+    /**
+     * Parser un JSON vers un objet Meal
+     * Methode helper pour faciliter l'utilisation
+     */
+    public com.canteen.menu.models.Meal parseMeal(Reader reader) throws JsonSyntaxException {
+        return fromJson(reader, com.canteen.menu.models.Meal.class);
+    }
 }

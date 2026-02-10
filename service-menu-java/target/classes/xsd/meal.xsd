@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="http://canteen.com/meal"
+           xmlns:tns="http://canteen.com/meal"
+           elementFormDefault="qualified">
+    
+    <!-- Definition du type Meal -->
+    <xs:element name="meal" type="tns:MealType"/>
+    
+    <xs:complexType name="MealType">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int" minOccurs="0"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="price" type="xs:decimal"/>
+            <xs:element name="categoryId" type="xs:int"/>
+            <xs:element name="categoryName" type="xs:string" minOccurs="0"/>
+            <xs:element name="imageUrl" type="xs:string" minOccurs="0"/>
+            <xs:element name="available" type="xs:boolean" default="true"/>
+            <xs:element name="nutritionalInfo" type="tns:NutritionalInfoType" minOccurs="0"/>
+            <xs:element name="allergens" type="tns:AllergensType" minOccurs="0"/>
+            <xs:element name="createdAt" type="xs:dateTime" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Informations nutritionnelles -->
+    <xs:complexType name="NutritionalInfoType">
+        <xs:sequence>
+            <xs:element name="calories" type="xs:int"/>
+            <xs:element name="protein" type="xs:decimal"/>
+            <xs:element name="carbs" type="xs:decimal"/>
+            <xs:element name="fat" type="xs:decimal"/>
+            <xs:element name="fiber" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="sodium" type="xs:decimal" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Liste des allergenes -->
+    <xs:complexType name="AllergensType">
+        <xs:sequence>
+            <xs:element name="allergen" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Liste de plats -->
+    <xs:element name="meals">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="meal" type="tns:MealType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>
