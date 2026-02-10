@@ -11,6 +11,7 @@ import Input from '../../components/forms/Input'
 import Textarea from '../../components/forms/Textarea'
 import Button from '../../components/ui/Button'
 import Alert from '../../components/ui/Alert'
+import { VALIDATION } from '../../utils/constants'
 
 /**
  * Page de contact avec formulaire de contact (nom, email, sujet, message),
@@ -199,7 +200,7 @@ const Contact = () => {
                   {...register('email', {
                     required: 'L&apos;email est requis',
                     pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      value: VALIDATION.EMAIL_REGEX,
                       message: 'Adresse email invalide',
                     },
                   })}

@@ -9,6 +9,10 @@ import PriceRangeSlider from '../../components/menu/PriceRangeSlider'
 import MealGrid from '../../components/menu/MealGrid'
 import useDebounce from '../../hooks/useDebounce'
 
+// Constantes pour les prix par défaut
+const DEFAULT_MIN_PRICE = 0
+const DEFAULT_MAX_PRICE = 100
+
 /**
  * Page du menu avec barre de recherche, filtres de catégorie,
  * filtres d'allergènes, slider de prix et grille de plats
@@ -20,7 +24,7 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'Tous')
   const [selectedAllergens, setSelectedAllergens] = useState([])
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 })
+  const [priceRange, setPriceRange] = useState({ min: DEFAULT_MIN_PRICE, max: DEFAULT_MAX_PRICE })
 
   // Debounce de la recherche pour éviter trop de requêtes
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
@@ -85,7 +89,7 @@ const Menu = () => {
     setSearchTerm('')
     setSelectedCategory('Tous')
     setSelectedAllergens([])
-    setPriceRange({ min: 0, max: 100 })
+    setPriceRange({ min: DEFAULT_MIN_PRICE, max: DEFAULT_MAX_PRICE })
     setSearchParams({})
   }
 
@@ -94,8 +98,8 @@ const Menu = () => {
     searchTerm ||
     selectedCategory !== 'Tous' ||
     selectedAllergens.length > 0 ||
-    priceRange.min !== 0 ||
-    priceRange.max !== 100
+    priceRange.min !== DEFAULT_MIN_PRICE ||
+    priceRange.max !== DEFAULT_MAX_PRICE
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -161,8 +165,8 @@ const Menu = () => {
               minPrice={priceRange.min}
               maxPrice={priceRange.max}
               onPriceChange={handlePriceChange}
-              absoluteMin={0}
-              absoluteMax={100}
+              absoluteMin={DEFAULT_MIN_PRICE}
+              absoluteMax={DEFAULT_MAX_PRICE}
             />
 
             {/* Informations sur les résultats */}
