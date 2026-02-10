@@ -1,0 +1,55 @@
+# Fichiers systeme
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Dependances et builds
+node_modules/
+dist/
+build/
+target/
+vendor/
+
+# Environnement
+.env
+.env.local
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporaires
+tmp/
+temp/
+*.tmp
+
+# Docker
+*.pid
+
+# Java
+*.class
+*.jar
+*.war
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+venv/
+env/
+
+# PHP
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
