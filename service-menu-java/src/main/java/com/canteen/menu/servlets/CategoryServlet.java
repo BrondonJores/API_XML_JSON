@@ -72,6 +72,8 @@ public class CategoryServlet extends HttpServlet {
         try {
             List<Category> categories = categoryDAO.findAll();
             
+            response.setStatus(HttpServletResponse.SC_OK);
+            
             if (ContentNegotiation.isXmlRequested(request)) {
                 ContentNegotiation.setXmlResponse(response);
                 try {
@@ -88,8 +90,6 @@ public class CategoryServlet extends HttpServlet {
                 String json = jsonService.toJson(categories);
                 response.getWriter().write(json);
             }
-            
-            response.setStatus(HttpServletResponse.SC_OK);
             
         } catch (Exception e) {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 

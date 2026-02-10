@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * Servlet pour la gestion du menu du jour via l'API REST
- * Retourne les repas disponibles groupes par categorie
+ * Retourne les repas disponibles groupés par catégorie
  */
 @WebServlet("/api/menu/today")
 public class MenuServlet extends HttpServlet {
@@ -37,7 +37,7 @@ public class MenuServlet extends HttpServlet {
     private JsonService jsonService;
     
     /**
-     * Classe pour representer une categorie avec ses repas
+     * Classe pour représenter une catégorie avec ses repas
      */
     @XmlRootElement(name = "categoryMenu")
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -167,6 +167,8 @@ public class MenuServlet extends HttpServlet {
                 }
             }
             
+            response.setStatus(HttpServletResponse.SC_OK);
+            
             if (ContentNegotiation.isXmlRequested(request)) {
                 ContentNegotiation.setXmlResponse(response);
                 try {
@@ -183,8 +185,6 @@ public class MenuServlet extends HttpServlet {
                 String json = jsonService.toJson(categoryMenus);
                 response.getWriter().write(json);
             }
-            
-            response.setStatus(HttpServletResponse.SC_OK);
             
         } catch (Exception e) {
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 

@@ -235,6 +235,8 @@ public class MealServlet extends HttpServlet {
         
         List<Meal> meals = mealDAO.findAll();
         
+        response.setStatus(HttpServletResponse.SC_OK);
+        
         if (ContentNegotiation.isXmlRequested(request)) {
             ContentNegotiation.setXmlResponse(response);
             try {
@@ -250,8 +252,6 @@ public class MealServlet extends HttpServlet {
             String json = jsonService.toJson(meals);
             response.getWriter().write(json);
         }
-        
-        response.setStatus(HttpServletResponse.SC_OK);
     }
     
     /**
