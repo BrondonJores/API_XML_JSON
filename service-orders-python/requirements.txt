@@ -1,0 +1,11 @@
+Flask==3.0.0
+Flask-CORS==4.0.0
+PyMySQL==1.1.0
+python-dotenv==1.0.0
+lxml==5.1.0
+xmlschema==3.0.2
+jsonschema==4.21.1
+dicttoxml==1.7.16
+xmltodict==0.13.0
+requests==2.31.0
+cryptography==41.0.7

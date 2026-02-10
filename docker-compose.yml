@@ -1,0 +1,167 @@
+version: '3.8'
+
+services:
+  # Base de donnees MySQL pour le service Menu
+  mysql-menu:
+    image: mysql:8.0
+    container_name: mysql-menu
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: canteen_menu
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-menu-data:/var/lib/mysql
+      - ./database-init/menu.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - canteen-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de donnees MySQL pour le service Orders
+  mysql-orders:
+    image: mysql:8.0
+    container_name: mysql-orders
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: canteen_orders
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-orders-data:/var/lib/mysql
+      - ./database-init/orders.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - canteen-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de donnees MySQL pour le service Gateway
+  mysql-auth:
+    image: mysql:8.0
+    container_name: mysql-auth
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: canteen_auth
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-auth-data:/var/lib/mysql
+      - ./database-init/auth.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - canteen-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Service Menu (Java + Jakarta EE + Tomcat)
+  service-menu:
+    build:
+      context: ./service-menu-java
+      dockerfile: Dockerfile
+    container_name: service-menu
+    ports:
+      - "8001:8080"
+    environment:
+      DB_HOST: mysql-menu
+      DB_PORT: 3306
+      DB_NAME: canteen_menu
+      DB_USER: root
+      DB_PASSWORD: root123
+    depends_on:
+      mysql-menu:
+        condition: service_healthy
+    networks:
+      - canteen-network
+    restart: unless-stopped
+
+  # Service Orders (Python Flask)
+  service-orders:
+    build:
+      context: ./service-orders-python
+      dockerfile: Dockerfile
+    container_name: service-orders
+    ports:
+      - "8002:5000"
+    environment:
+      DB_HOST: mysql-orders
+      DB_PORT: 3306
+      DB_NAME: canteen_orders
+      DB_USER: root
+      DB_PASSWORD: root123
+      MENU_SERVICE_URL: http://service-menu:8080
+      FLASK_ENV: production
+    depends_on:
+      mysql-orders:
+        condition: service_healthy
+      service-menu:
+        condition: service_started
+    networks:
+      - canteen-network
+    restart: unless-stopped
+
+  # Service Gateway (Laravel + PHP-FPM)
+  service-gateway:
+    build:
+      context: ./service-gateway-laravel
+      dockerfile: Dockerfile
+    container_name: service-gateway
+    ports:
+      - "8003:8000"
+    environment:
+      DB_HOST: mysql-auth
+      DB_PORT: 3306
+      DB_NAME: canteen_auth
+      DB_USER: root
+      DB_PASSWORD: root123
+      MENU_SERVICE_URL: http://service-menu:8080
+      ORDERS_SERVICE_URL: http://service-orders:5000
+      APP_KEY: base64:YourRandomGeneratedKeyHere1234567890==
+      APP_ENV: production
+      APP_DEBUG: "false"
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
+      service-menu:
+        condition: service_started
+      service-orders:
+        condition: service_started
+    networks:
+      - canteen-network
+    restart: unless-stopped
+
+  # Service Frontend (React + Nginx)
+  service-frontend:
+    build:
+      context: ./service-frontend-react
+      dockerfile: Dockerfile
+    container_name: service-frontend
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:8003
+    depends_on:
+      - service-gateway
+    networks:
+      - canteen-network
+    restart: unless-stopped
+
+volumes:
+  mysql-menu-data:
+    driver: local
+  mysql-orders-data:
+    driver: local
+  mysql-auth-data:
+    driver: local
+
+networks:
+  canteen-network:
+    driver: bridge
+    name: canteen-network
