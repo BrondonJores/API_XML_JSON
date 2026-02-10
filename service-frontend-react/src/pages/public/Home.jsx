@@ -131,7 +131,7 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {popularMeals?.slice(0, 6).map((meal) => (
-                <Link key={meal.id} to={`/meals/${meal.id}`}>
+                <Link key={meal.id} to={`/menu/${meal.id}`}>
                   <MealCard meal={meal} />
                 </Link>
               ))}
@@ -197,7 +197,7 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {newMeals?.slice(0, 3).map((meal) => (
-                <Link key={meal.id} to={`/meals/${meal.id}`}>
+                <Link key={meal.id} to={`/menu/${meal.id}`}>
                   <MealCard meal={meal} />
                 </Link>
               ))}
