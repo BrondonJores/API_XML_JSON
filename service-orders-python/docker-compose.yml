@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Service Orders Python
+  orders-service:
+    build: .
+    container_name: orders-service
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=mysql-orders
+      - DB_PORT=3306
+      - DB_NAME=orders_db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - MENU_SERVICE_URL=http://service-menu-java:8080
+      - DEBUG=True
+    depends_on:
+      - mysql-orders
+    networks:
+      - orders-network
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+
+  # Base de données MySQL pour Orders
+  mysql-orders:
+    image: mysql:8.0
+    container_name: mysql-orders
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=orders_db
+    ports:
+      - "3307:3306"
+    networks:
+      - orders-network
+    volumes:
+      - mysql-orders-data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+networks:
+  orders-network:
+    driver: bridge
+
+volumes:
+  mysql-orders-data:

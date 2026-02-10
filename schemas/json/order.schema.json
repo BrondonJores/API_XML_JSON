@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Order",
+  "description": "Schema de validation pour une commande",
+  "type": "object",
+  "required": ["userId", "total", "pickupTime", "items"],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Identifiant unique de la commande"
+    },
+    "userId": {
+      "type": "integer",
+      "description": "Identifiant de l'utilisateur"
+    },
+    "total": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Montant total de la commande"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "preparing", "ready", "completed", "cancelled"],
+      "description": "Statut de la commande"
+    },
+    "pickupTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Heure de retrait prevue"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Liste des articles de la commande",
+      "items": {
+        "type": "object",
+        "required": ["mealId", "mealName", "quantity", "price"],
+        "properties": {
+          "mealId": {
+            "type": "integer",
+            "description": "Identifiant du plat"
+          },
+          "mealName": {
+            "type": "string",
+            "description": "Nom du plat"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Quantite"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Prix unitaire"
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de creation de la commande"
+    }
+  }
+}

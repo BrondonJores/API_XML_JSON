@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Menu - Cantine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .endpoint {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .method {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .get { background: #27ae60; color: white; }
+        .post { background: #f39c12; color: white; }
+        .put { background: #3498db; color: white; }
+        .delete { background: #e74c3c; color: white; }
+        code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Service de Gestion des Menus</h1>
+    
+    <div class="info-box">
+        <h2>Informations</h2>
+        <p>Service Java EE pour la gestion des menus de la cantine.</p>
+        <p>Supporte les formats XML et JSON via content negotiation.</p>
+    </div>
+
+    <div class="info-box">
+        <h2>Endpoints disponibles</h2>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/meals</code> - Liste tous les plats
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/meals/{id}</code> - Recupere un plat specifique
+        </div>
+
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <code>/api/meals</code> - Cree un nouveau plat
+        </div>
+
+        <div class="endpoint">
+            <span class="method put">PUT</span>
+            <code>/api/meals/{id}</code> - Met a jour un plat
+        </div>
+
+        <div class="endpoint">
+            <span class="method delete">DELETE</span>
+            <code>/api/meals/{id}</code> - Supprime un plat
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/menu</code> - Menu complet
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/menu/available</code> - Plats disponibles
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/menu/category/{id}</code> - Plats par categorie
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/categories</code> - Liste toutes les categories
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/categories/{id}</code> - Recupere une categorie
+        </div>
+
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <code>/api/categories</code> - Cree une categorie
+        </div>
+
+        <div class="endpoint">
+            <span class="method put">PUT</span>
+            <code>/api/categories/{id}</code> - Met a jour une categorie
+        </div>
+
+        <div class="endpoint">
+            <span class="method delete">DELETE</span>
+            <code>/api/categories/{id}</code> - Supprime une categorie
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <code>/api/export/xml</code> - Exporte le menu en XML
+        </div>
+
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <code>/api/validate/xml</code> - Valide un XML contre le schema XSD
+        </div>
+
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <code>/api/transform/xslt</code> - Transforme XML en HTML via XSLT
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h2>Content Negotiation</h2>
+        <p>Utilisez le header <code>Accept</code> pour specifier le format souhaite:</p>
+        <ul>
+            <li><code>Accept: application/xml</code> pour XML</li>
+            <li><code>Accept: application/json</code> pour JSON</li>
+        </ul>
+    </div>
+</body>
+</html>
