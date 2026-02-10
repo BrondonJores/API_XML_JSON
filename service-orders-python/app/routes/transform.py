@@ -2,7 +2,7 @@
 Module de routes pour les transformations XSLT
 """
 
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, current_app
 import logging
 import os
 from app.services.xslt_service import XSLTService
@@ -20,7 +20,8 @@ def order_to_invoice():
     try:
         xml_data = request.data.decode('utf-8')
         
-        xslt_path = os.path.join('xslt', 'order-to-invoice.xslt')
+        xslt_path = os.path.join(current_app.root_path, '..', 'xslt', 'order-to-invoice.xslt')
+        xslt_path = os.path.abspath(xslt_path)
         
         html_result = XSLTService.transform(xml_data, xslt_path)
         
@@ -39,7 +40,8 @@ def orders_to_stats():
     try:
         xml_data = request.data.decode('utf-8')
         
-        xslt_path = os.path.join('xslt', 'orders-to-stats.xslt')
+        xslt_path = os.path.join(current_app.root_path, '..', 'xslt', 'orders-to-stats.xslt')
+        xslt_path = os.path.abspath(xslt_path)
         
         html_result = XSLTService.transform(xml_data, xslt_path)
         

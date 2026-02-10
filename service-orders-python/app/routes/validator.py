@@ -2,7 +2,7 @@
 Module de routes pour la validation de XML et JSON
 """
 
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
 import logging
 import os
 from app.services.xml_service import XMLService
@@ -21,7 +21,8 @@ def validate_order_xml():
     try:
         xml_data = request.data.decode('utf-8')
         
-        xsd_path = os.path.join('schemas', 'order.xsd')
+        xsd_path = os.path.join(current_app.root_path, '..', 'schemas', 'order.xsd')
+        xsd_path = os.path.abspath(xsd_path)
         
         is_valid = XMLService.validate_xml(xml_data, xsd_path)
         
@@ -46,7 +47,8 @@ def validate_order_json():
     try:
         json_data = request.data.decode('utf-8')
         
-        schema_path = os.path.join('schemas', 'order.schema.json')
+        schema_path = os.path.join(current_app.root_path, '..', 'schemas', 'order.schema.json')
+        schema_path = os.path.abspath(schema_path)
         
         is_valid = JSONService.validate_json(json_data, schema_path)
         

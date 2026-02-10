@@ -24,10 +24,14 @@ def create_app(config_class=Config):
     CORS(app)
     
     # Enregistrement des blueprints (routes)
-    from app.routes import orders, queue, health
+    from app.routes import orders, queue, health, converter, validator, recommendations, transform
     
     app.register_blueprint(orders.bp)
     app.register_blueprint(queue.bp)
     app.register_blueprint(health.bp)
+    app.register_blueprint(converter.bp)
+    app.register_blueprint(validator.bp)
+    app.register_blueprint(recommendations.bp)
+    app.register_blueprint(transform.bp)
     
     return app
