@@ -15,6 +15,8 @@ public class DatabaseConnection {
     private static final String DB_USER = System.getenv().getOrDefault("DB_USER", "root");
     private static final String DB_PASSWORD = System.getenv().getOrDefault("DB_PASSWORD", "root123");
     
+    // Note: SSL desactive pour l'environnement de developpement
+    // Pour la production, activer SSL avec useSSL=true et configurer les certificats
     private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME 
             + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     

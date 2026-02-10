@@ -154,6 +154,7 @@ public class MealDAO {
             
             conn.commit();
             
+            // Recharger le plat complet avec toutes les jointures pour garantir la coherence
             return getMealById(meal.getId());
             
         } catch (SQLException e) {
@@ -221,6 +222,7 @@ public class MealDAO {
             
             conn.commit();
             
+            // Recharger le plat complet avec toutes les jointures pour garantir la coherence
             return getMealById(meal.getId());
             
         } catch (SQLException e) {
