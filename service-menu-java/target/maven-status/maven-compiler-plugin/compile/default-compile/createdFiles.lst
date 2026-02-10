@@ -1,0 +1,13 @@
+com/canteen/menu/services/JsonService.class
+com/canteen/menu/models/CategoryList.class
+com/canteen/menu/utils/ContentNegotiation.class
+com/canteen/menu/services/XsltService.class
+com/canteen/menu/utils/DatabaseConnection.class
+com/canteen/menu/models/Category.class
+com/canteen/menu/services/XmlService.class
+com/canteen/menu/dao/CategoryDAO.class
+com/canteen/menu/models/NutritionalInfo.class
+com/canteen/menu/dao/MealDAO.class
+com/canteen/menu/models/Allergen.class
+com/canteen/menu/models/MealList.class
+com/canteen/menu/models/Meal.class
