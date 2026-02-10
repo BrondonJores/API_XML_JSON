@@ -93,7 +93,7 @@ public class XsltTransformServlet extends HttpServlet {
         
         String pdfOutput = xsltService.transform(xmlContent, XSLT_MEAL_TO_PDF);
         
-        response.setContentType("application/pdf; charset=UTF-8");
+        response.setContentType("application/xml; charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(pdfOutput);
     }
@@ -118,7 +118,7 @@ public class XsltTransformServlet extends HttpServlet {
         String line;
         
         while ((line = reader.readLine()) != null) {
-            buffer.append(line);
+            buffer.append(line).append("\n");
         }
         
         return buffer.toString();
