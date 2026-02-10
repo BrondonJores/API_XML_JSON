@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Order Schema",
+  "description": "Schema de validation pour les commandes",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Identifiant unique de la commande"
+    },
+    "user_id": {
+      "type": "integer",
+      "description": "Identifiant de l'utilisateur"
+    },
+    "total": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Montant total de la commande"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "preparing", "ready", "completed", "cancelled"],
+      "default": "pending",
+      "description": "Statut de la commande"
+    },
+    "pickup_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Heure de retrait de la commande"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de creation de la commande"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Articles de la commande",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identifiant de l'article"
+          },
+          "order_id": {
+            "type": "integer",
+            "description": "Identifiant de la commande"
+          },
+          "meal_id": {
+            "type": "integer",
+            "description": "Identifiant du plat"
+          },
+          "meal_name": {
+            "type": "string",
+            "description": "Nom du plat"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Quantite commandee"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Prix unitaire du plat"
+          }
+        },
+        "required": ["meal_id", "meal_name", "quantity", "price"]
+      }
+    }
+  },
+  "required": ["user_id", "total", "items"]
+}
