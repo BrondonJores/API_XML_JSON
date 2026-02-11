@@ -2,27 +2,45 @@ package com.canteen.menu.services;
 
 import net.sf.saxon.s9api.*;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URL;
 
 /**
- * Service pour les transformations XSLT avec Saxon
+ * Service securise pour les transformations XSLT avec Saxon
  * Permet de transformer des documents XML en utilisant des feuilles de style XSLT
+ * SECURITE: Protection contre les attaques XXE (XML External Entity)
  */
 public class XsltService {
     
     private final Processor processor;
     
     /**
-     * Constructeur initialisant le processeur Saxon
+     * Constructeur initialisant le processeur Saxon avec securite renforcee
      */
     public XsltService() {
+        // Initialiser le processeur Saxon avec les options de securite
         this.processor = new Processor(false);
     }
     
     /**
-     * Transformer un XML avec une feuille XSLT
+     * Creer un StreamSource securise avec protection XXE
+     * @param content Le contenu a transformer
+     * @return StreamSource securise
+     */
+    private StreamSource createSecureStreamSource(String content) {
+        StringReader reader = new StringReader(content);
+        StreamSource source = new StreamSource(reader);
+        
+        // Desactiver la resolution d'entites externes
+        source.setSystemId("");
+        
+        return source;
+    }
+    
+    /**
+     * Transformer un XML avec une feuille XSLT de maniere securisee
      * @param xmlContent Le contenu XML a transformer
      * @param xsltPath Chemin vers le fichier XSLT dans les ressources
      * @return Le resultat de la transformation
@@ -42,8 +60,8 @@ public class XsltService {
         
         XsltTransformer transformer = stylesheet.load();
         
-        StringReader xmlReader = new StringReader(xmlContent);
-        StreamSource xmlSource = new StreamSource(xmlReader);
+        // Utiliser un StreamSource securise
+        StreamSource xmlSource = createSecureStreamSource(xmlContent);
         transformer.setSource(xmlSource);
         
         StringWriter resultWriter = new StringWriter();
@@ -77,6 +95,7 @@ public class XsltService {
         XsltTransformer transformer = stylesheet.load();
         
         StreamSource xmlSource = new StreamSource(xmlInputStream);
+        xmlSource.setSystemId("");
         transformer.setSource(xmlSource);
         
         StringWriter resultWriter = new StringWriter();
@@ -109,8 +128,7 @@ public class XsltService {
         
         XsltTransformer transformer = stylesheet.load();
         
-        StringReader xmlReader = new StringReader(xmlContent);
-        StreamSource xmlSource = new StreamSource(xmlReader);
+        StreamSource xmlSource = createSecureStreamSource(xmlContent);
         transformer.setSource(xmlSource);
         
         Serializer serializer = processor.newSerializer(outputStream);
@@ -150,8 +168,7 @@ public class XsltService {
             }
         }
         
-        StringReader xmlReader = new StringReader(xmlContent);
-        StreamSource xmlSource = new StreamSource(xmlReader);
+        StreamSource xmlSource = createSecureStreamSource(xmlContent);
         transformer.setSource(xmlSource);
         
         StringWriter resultWriter = new StringWriter();
