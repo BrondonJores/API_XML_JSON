@@ -21,7 +21,7 @@ return [
 
     'guard' => ['web'],
 
-    'expiration' => null,
+    'expiration' => env('SANCTUM_EXPIRATION', 60), // 60 minutes par defaut
 
     'middleware' => [
         'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,

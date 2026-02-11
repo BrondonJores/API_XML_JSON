@@ -35,5 +35,28 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+        
+        // Gestion personnalisee des erreurs pour l'API
+        $this->renderable(function (Throwable $e, $request) {
+            if ($request->is('api/*')) {
+                // Ne pas exposer les details d'erreur en production
+                if (config('app.env') === 'production') {
+                    $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+                    
+                    // Messages generiques selon le code d'erreur
+                    $messages = [
+                        404 => 'Ressource non trouvee',
+                        401 => 'Non authentifie',
+                        403 => 'Acces interdit',
+                        422 => 'Donnees de validation invalides',
+                        500 => 'Une erreur interne est survenue',
+                    ];
+                    
+                    return response()->json([
+                        'message' => $messages[$statusCode] ?? 'Une erreur est survenue',
+                    ], $statusCode);
+                }
+            }
+        });
     }
 }
