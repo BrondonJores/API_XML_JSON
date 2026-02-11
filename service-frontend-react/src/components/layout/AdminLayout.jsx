@@ -1,6 +1,14 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import clsx from 'clsx'
+import {
+  ChartBarIcon,
+  RectangleStackIcon,
+  UsersIcon,
+  ChartPieIcon,
+  HomeIcon,
+  ArrowRightOnRectangleIcon
+} from '@heroicons/react/24/outline'
 
 // Layout pour l'administration
 function AdminLayout() {
@@ -8,10 +16,10 @@ function AdminLayout() {
   const location = useLocation()
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: '📊' },
-    { name: 'Plats', href: '/admin/meals', icon: '🍽️' },
-    { name: 'Utilisateurs', href: '/admin/users', icon: '👥' },
-    { name: 'Analytics', href: '/admin/analytics', icon: '📈' },
+    { name: 'Dashboard', href: '/admin', icon: ChartBarIcon },
+    { name: 'Plats', href: '/admin/meals', icon: RectangleStackIcon },
+    { name: 'Utilisateurs', href: '/admin/users', icon: UsersIcon },
+    { name: 'Analytics', href: '/admin/analytics', icon: ChartPieIcon },
   ]
 
   const isActive = (path) => {
@@ -49,7 +57,7 @@ function AdminLayout() {
                   : 'text-gray-700 hover:bg-gray-50'
               )}
             >
-              <span className="text-xl">{item.icon}</span>
+              <item.icon className="w-6 h-6" />
               <span>{item.name}</span>
             </Link>
           ))}
@@ -60,14 +68,14 @@ function AdminLayout() {
             to="/"
             className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition"
           >
-            <span className="text-xl">🏠</span>
+            <HomeIcon className="w-6 h-6" />
             <span>Retour au site</span>
           </Link>
           <button
             onClick={logout}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition"
           >
-            <span className="text-xl">🚪</span>
+            <ArrowRightOnRectangleIcon className="w-6 h-6" />
             <span>Déconnexion</span>
           </button>
         </div>

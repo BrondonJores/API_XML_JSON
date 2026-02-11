@@ -8,6 +8,7 @@ import Badge from '../../components/ui/Badge'
 import Loader from '../../components/ui/Loader'
 import NutritionalTable from '../../components/menu/NutritionalTable'
 import { ALLERGEN_LABELS } from '../../utils/constants'
+import { RectangleStackIcon } from '@heroicons/react/24/outline'
 
 function MealDetail() {
   const { id } = useParams()
@@ -48,7 +49,9 @@ function MealDetail() {
                 <img src={meal.image} alt={meal.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <span className="text-8xl">🍽️</span>
+                  <div className="w-32 h-32 bg-primary-100 rounded-3xl flex items-center justify-center">
+                    <RectangleStackIcon className="w-16 h-16 text-primary-600" />
+                  </div>
                 </div>
               )}
             </div>

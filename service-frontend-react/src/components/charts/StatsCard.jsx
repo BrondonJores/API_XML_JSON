@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-function StatsCard({ title, value, icon, trend, trendValue, color = 'primary' }) {
+function StatsCard({ title, value, icon: Icon, trend, trendValue, color = 'primary' }) {
   const colors = {
     primary: 'text-primary-600 bg-primary-100',
     success: 'text-green-600 bg-green-100',
@@ -24,9 +24,9 @@ function StatsCard({ title, value, icon, trend, trendValue, color = 'primary' })
             </p>
           )}
         </div>
-        {icon && (
-          <div className={clsx('w-12 h-12 rounded-lg flex items-center justify-center text-2xl', colors[color])}>
-            {icon}
+        {Icon && (
+          <div className={clsx('w-12 h-12 rounded-lg flex items-center justify-center', colors[color])}>
+            <Icon className="w-6 h-6" />
           </div>
         )}
       </div>

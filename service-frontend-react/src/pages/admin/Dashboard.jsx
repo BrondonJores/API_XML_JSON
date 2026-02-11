@@ -3,6 +3,12 @@ import * as orderService from '../../services/orderService'
 import StatsCard from '../../components/charts/StatsCard'
 import LineChart from '../../components/charts/LineChart'
 import Loader from '../../components/ui/Loader'
+import {
+  ShoppingBagIcon,
+  CurrencyDollarIcon,
+  UsersIcon,
+  RectangleStackIcon
+} from '@heroicons/react/24/outline'
 
 function Dashboard() {
   const { data: stats, isLoading } = useQuery({
@@ -32,7 +38,7 @@ function Dashboard() {
         <StatsCard
           title="Commandes aujourd'hui"
           value={stats?.todayOrders || 0}
-          icon="📦"
+          icon={ShoppingBagIcon}
           color="primary"
           trend="up"
           trendValue="+12%"
@@ -40,7 +46,7 @@ function Dashboard() {
         <StatsCard
           title="Revenu"
           value={`${stats?.revenue || 0}€`}
-          icon="💰"
+          icon={CurrencyDollarIcon}
           color="success"
           trend="up"
           trendValue="+8%"
@@ -48,13 +54,13 @@ function Dashboard() {
         <StatsCard
           title="Clients"
           value={stats?.customers || 0}
-          icon="👥"
+          icon={UsersIcon}
           color="warning"
         />
         <StatsCard
           title="Plats actifs"
           value={stats?.activeMeals || 0}
-          icon="🍽️"
+          icon={RectangleStackIcon}
           color="primary"
         />
       </div>
