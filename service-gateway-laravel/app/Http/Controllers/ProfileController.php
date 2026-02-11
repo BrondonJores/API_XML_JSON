@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\UserAllergy;
 use App\Models\UserPreference;
 use Illuminate\Http\JsonResponse;
@@ -35,42 +36,28 @@ class ProfileController extends Controller
     /**
      * Mettre à jour le profil de l'utilisateur.
      *
-     * @param Request $request
+     * @param ProfileUpdateRequest $request
      * @return JsonResponse
      */
-    public function update(Request $request): JsonResponse
+    public function update(ProfileUpdateRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
-            'address' => 'sometimes|nullable|string|max:255',
-            'city' => 'sometimes|nullable|string|max:100',
-            'postal_code' => 'sometimes|nullable|string|max:20',
-            'country' => 'sometimes|nullable|string|max:100',
-            'date_of_birth' => 'sometimes|nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Erreur de validation',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
             $user = $request->user();
+            $validated = $request->validated();
 
-            // Mettre à jour le nom de l'utilisateur si fourni
-            if ($request->has('name')) {
-                $user->update(['name' => $request->name]);
+            // Mettre à jour le nom et l'email de l'utilisateur si fournis
+            if (isset($validated['name']) || isset($validated['email'])) {
+                $user->update([
+                    'name' => $validated['name'] ?? $user->name,
+                    'email' => $validated['email'] ?? $user->email,
+                ]);
             }
 
-            // Mettre à jour le profil
-            $profileData = $request->only(['phone', 'address', 'city', 'postal_code', 'country', 'date_of_birth']);
-            if (!empty($profileData)) {
+            // Mettre à jour le budget du profil si fourni
+            if (isset($validated['budget'])) {
                 $user->profile()->updateOrCreate(
                     ['user_id' => $user->id],
-                    $profileData
+                    ['budget' => $validated['budget']]
                 );
             }
 
@@ -87,16 +74,16 @@ class ProfileController extends Controller
     }
 
     /**
-     * Ajouter une allergie à l'utilisateur.
+     * Gérer les allergies de l'utilisateur.
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function addAllergy(Request $request): JsonResponse
+    public function updateAllergies(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'allergy_name' => 'required|string|max:255',
-            'severity' => 'nullable|string|in:low,medium,high',
+            'allergies' => 'required|array',
+            'allergies.*' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -107,67 +94,41 @@ class ProfileController extends Controller
         }
 
         try {
-            $allergy = $request->user()->allergies()->create([
-                'allergy_name' => $request->allergy_name,
-                'severity' => $request->severity ?? 'medium',
-            ]);
-
-            return response()->json([
-                'message' => 'Allergie ajoutée avec succès',
-                'data' => $allergy,
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erreur lors de l\'ajout de l\'allergie',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Supprimer une allergie de l'utilisateur.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function removeAllergy(Request $request, int $id): JsonResponse
-    {
-        try {
-            $allergy = UserAllergy::where('id', $id)
-                ->where('user_id', $request->user()->id)
-                ->first();
-
-            if (!$allergy) {
-                return response()->json([
-                    'message' => 'Allergie non trouvée',
-                ], 404);
+            $user = $request->user();
+            
+            // Supprimer les anciennes allergies
+            $user->allergies()->delete();
+            
+            // Ajouter les nouvelles allergies
+            foreach ($request->allergies as $allergen) {
+                $user->allergies()->create([
+                    'allergen' => $allergen,
+                ]);
             }
 
-            $allergy->delete();
-
             return response()->json([
-                'message' => 'Allergie supprimée avec succès',
+                'message' => 'Allergies mises à jour avec succès',
+                'data' => $user->load('allergies'),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Erreur lors de la suppression de l\'allergie',
+                'message' => 'Erreur lors de la mise à jour des allergies',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Ajouter une préférence à l'utilisateur.
+     * Gérer les préférences de l'utilisateur.
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function addPreference(Request $request): JsonResponse
+    public function updatePreferences(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'preference_key' => 'required|string|max:255',
-            'preference_value' => 'required|string|max:255',
+            'preferences' => 'required|array',
+            'preferences.*' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -178,51 +139,25 @@ class ProfileController extends Controller
         }
 
         try {
-            $preference = $request->user()->preferences()->create([
-                'preference_key' => $request->preference_key,
-                'preference_value' => $request->preference_value,
-            ]);
-
-            return response()->json([
-                'message' => 'Préférence ajoutée avec succès',
-                'data' => $preference,
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erreur lors de l\'ajout de la préférence',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Supprimer une préférence de l'utilisateur.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function removePreference(Request $request, int $id): JsonResponse
-    {
-        try {
-            $preference = UserPreference::where('id', $id)
-                ->where('user_id', $request->user()->id)
-                ->first();
-
-            if (!$preference) {
-                return response()->json([
-                    'message' => 'Préférence non trouvée',
-                ], 404);
+            $user = $request->user();
+            
+            // Supprimer les anciennes préférences
+            $user->preferences()->delete();
+            
+            // Ajouter les nouvelles préférences
+            foreach ($request->preferences as $preference) {
+                $user->preferences()->create([
+                    'preference' => $preference,
+                ]);
             }
 
-            $preference->delete();
-
             return response()->json([
-                'message' => 'Préférence supprimée avec succès',
+                'message' => 'Préférences mises à jour avec succès',
+                'data' => $user->load('preferences'),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Erreur lors de la suppression de la préférence',
+                'message' => 'Erreur lors de la mise à jour des préférences',
                 'error' => $e->getMessage(),
             ], 500);
         }

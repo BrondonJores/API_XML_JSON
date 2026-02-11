@@ -16,47 +16,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Routes d'authentification publiques avec rate limiting
-Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
-    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+// Routes publiques
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok', 'service' => 'gateway']);
 });
 
-// Routes d'authentification protégées
-Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
-});
-
-// Routes de profil utilisateur
-Route::middleware('auth:sanctum')->prefix('profile')->group(function () {
-    Route::get('/', [ProfileController::class, 'show']);
-    Route::put('/', [ProfileController::class, 'update']);
+// Routes protégées par Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::get('/auth/me', [AuthController::class, 'me']);
     
-    // Gestion des allergies
-    Route::post('allergies', [ProfileController::class, 'addAllergy']);
-    Route::delete('allergies/{id}', [ProfileController::class, 'removeAllergy']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/allergies', [ProfileController::class, 'updateAllergies']);
+    Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences']);
     
-    // Gestion des préférences
-    Route::post('preferences', [ProfileController::class, 'addPreference']);
-    Route::delete('preferences/{id}', [ProfileController::class, 'removePreference']);
+    Route::any('/gateway/menu/{path}', [ProxyController::class, 'proxyToMenu'])->where('path', '.*');
+    Route::any('/gateway/orders/{path}', [ProxyController::class, 'proxyToOrders'])->where('path', '.*');
 });
 
-// Routes proxy vers le service Menu
-Route::middleware('auth:sanctum')->prefix('menu')->group(function () {
-    Route::any('{path?}', [ProxyController::class, 'proxyMenu'])->where('path', '.*');
-});
-
-// Routes proxy vers le service Orders
-Route::middleware('auth:sanctum')->prefix('orders')->group(function () {
-    Route::any('{path?}', [ProxyController::class, 'proxyOrders'])->where('path', '.*');
-});
-
-// Route de vérification de santé
-Route::get('health', function () {
-    return response()->json([
-        'status' => 'ok',
-        'service' => 'gateway',
-        'timestamp' => now()->toIso8601String(),
-    ]);
-});
