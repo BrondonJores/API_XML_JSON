@@ -93,12 +93,17 @@ export const configureDOMPurify = () => {
     }
   });
   
-  // Supprimer les liens javascript:
+  // Supprimer les liens avec protocoles dangereux
   DOMPurify.addHook('uponSanitizeElement', (node, data) => {
     if (data.tagName === 'a') {
       const href = node.getAttribute('href');
-      if (href && href.toLowerCase().startsWith('javascript:')) {
-        node.remove();
+      if (href) {
+        const lowerHref = href.toLowerCase().trim();
+        // Bloquer javascript:, data:, vbscript: et autres protocoles dangereux
+        const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:', 'about:'];
+        if (dangerousProtocols.some(protocol => lowerHref.startsWith(protocol))) {
+          node.remove();
+        }
       }
     }
   });
