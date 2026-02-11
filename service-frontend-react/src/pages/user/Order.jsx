@@ -6,6 +6,7 @@ import Button from '../../components/ui/Button'
 import CartItem from '../../components/orders/CartItem'
 import CartSummary from '../../components/orders/CartSummary'
 import EmptyState from '../../components/common/EmptyState'
+import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 
 function Order() {
   const navigate = useNavigate()
@@ -43,7 +44,7 @@ function Order() {
       <div className="py-8">
         <div className="container-custom">
           <EmptyState
-            icon="🛒"
+            icon={ShoppingCartIcon}
             title="Votre panier est vide"
             description="Ajoutez des plats depuis notre menu"
             action={

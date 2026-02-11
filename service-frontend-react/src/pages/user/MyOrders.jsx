@@ -3,6 +3,7 @@ import * as orderService from '../../services/orderService'
 import OrderCard from '../../components/orders/OrderCard'
 import Loader from '../../components/ui/Loader'
 import EmptyState from '../../components/common/EmptyState'
+import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 
 function MyOrders() {
   const { data: orders, isLoading } = useQuery({
@@ -25,7 +26,7 @@ function MyOrders() {
 
         {!orders || orders.length === 0 ? (
           <EmptyState
-            icon="📦"
+            icon={ShoppingBagIcon}
             title="Aucune commande"
             description="Vous n'avez pas encore passé de commande"
           />

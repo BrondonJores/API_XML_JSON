@@ -3,6 +3,7 @@ import { formatPrice } from '../../utils/formatters'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
 import { useCart } from '../../hooks/useCart'
+import { RectangleStackIcon } from '@heroicons/react/24/outline'
 
 function MealCard({ meal }) {
   const { addItem, isInCart } = useCart()
@@ -23,8 +24,10 @@ function MealCard({ meal }) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
-              <span className="text-4xl">🍽️</span>
+            <div className="flex items-center justify-center h-full">
+              <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center">
+                <RectangleStackIcon className="w-8 h-8 text-primary-600" />
+              </div>
             </div>
           )}
           {meal.isPopular && (

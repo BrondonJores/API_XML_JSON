@@ -178,6 +178,25 @@ export const ACCEPTED_FILE_TYPES = {
   DOCUMENTS: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
 }
 
+// Témoignages clients
+export const TESTIMONIALS = [
+  {
+    name: 'Marie Dupont',
+    rating: 5,
+    comment: 'Des plats délicieux et une livraison ultra rapide ! Je recommande vivement ce restaurant.'
+  },
+  {
+    name: 'Jean Martin',
+    rating: 5,
+    comment: 'Interface très intuitive et menu varié. C\'est devenu mon restaurant préféré pour commander en ligne.'
+  },
+  {
+    name: 'Sophie Laurent',
+    rating: 5,
+    comment: 'Qualité exceptionnelle, portions généreuses et service impeccable. Bravo à toute l\'équipe !'
+  }
+]
+
 // URLs par défaut
 export const DEFAULT_AVATAR = '/assets/default-avatar.png'
 export const DEFAULT_MEAL_IMAGE = '/assets/default-meal.png'
@@ -205,6 +224,7 @@ export default {
   SEARCH_DEBOUNCE_DELAY,
   MAX_FILE_SIZE,
   ACCEPTED_FILE_TYPES,
+  TESTIMONIALS,
   DEFAULT_AVATAR,
   DEFAULT_MEAL_IMAGE,
 }

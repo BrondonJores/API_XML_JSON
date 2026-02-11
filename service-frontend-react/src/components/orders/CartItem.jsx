@@ -1,5 +1,6 @@
 import { formatPrice } from '../../utils/formatters'
 import Button from '../ui/Button'
+import { RectangleStackIcon } from '@heroicons/react/24/outline'
 
 function CartItem({ item, onUpdateQuantity, onRemove }) {
   return (
@@ -12,8 +13,8 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
             className="w-full h-full object-cover rounded-lg"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-2xl">🍽️</span>
+          <div className="w-full h-full flex items-center justify-center bg-primary-50 rounded-lg">
+            <RectangleStackIcon className="w-8 h-8 text-primary-600" />
           </div>
         )}
       </div>
