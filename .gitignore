@@ -1,0 +1,31 @@
+# Fichiers de secrets
+.env
+.env.local
+.env.*.local
+secrets/*.txt
+secrets/*.key
+secrets/*.pem
+!secrets/.gitkeep
+!secrets/README.md
+
+# Logs
+*.log
+
+# Credentials
+credentials/
+*.key
+*.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+target/
+dist/
+build/
+node_modules/
