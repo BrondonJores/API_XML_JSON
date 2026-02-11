@@ -27,7 +27,7 @@ class ProxyController extends Controller
      * @param string $path
      * @return JsonResponse
      */
-    public function proxyMenu(Request $request, string $path = ''): JsonResponse
+    public function proxyToMenu(Request $request, string $path = ''): JsonResponse
     {
         $method = $request->method();
         $user = $request->user();
@@ -45,7 +45,7 @@ class ProxyController extends Controller
         if ($user) {
             $headers['X-User-Id'] = $user->id;
             $headers['X-User-Email'] = $user->email;
-            $headers['X-User-Admin'] = $user->is_admin ? 'true' : 'false';
+            $headers['X-User-Role'] = $user->role ?? 'user';
         }
 
         // Effectuer la requête selon la méthode HTTP
@@ -72,7 +72,7 @@ class ProxyController extends Controller
      * @param string $path
      * @return JsonResponse
      */
-    public function proxyOrders(Request $request, string $path = ''): JsonResponse
+    public function proxyToOrders(Request $request, string $path = ''): JsonResponse
     {
         $method = $request->method();
         $user = $request->user();
@@ -90,7 +90,7 @@ class ProxyController extends Controller
         if ($user) {
             $headers['X-User-Id'] = $user->id;
             $headers['X-User-Email'] = $user->email;
-            $headers['X-User-Admin'] = $user->is_admin ? 'true' : 'false';
+            $headers['X-User-Role'] = $user->role ?? 'user';
         }
 
         // Effectuer la requête selon la méthode HTTP

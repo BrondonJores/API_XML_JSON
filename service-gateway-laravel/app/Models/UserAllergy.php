@@ -16,8 +16,7 @@ class UserAllergy extends Model
      */
     protected $fillable = [
         'user_id',
-        'allergy_name',
-        'severity',
+        'allergen',
     ];
 
     /**

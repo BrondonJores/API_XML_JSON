@@ -14,12 +14,8 @@ return new class extends Migration
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('phone', 20)->nullable();
-            $table->string('address')->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('postal_code', 20)->nullable();
-            $table->string('country', 100)->nullable();
-            $table->date('date_of_birth')->nullable();
+            $table->decimal('budget', 10, 2)->default(0);
+            $table->decimal('spent_this_month', 10, 2)->default(0);
             $table->timestamps();
         });
     }

@@ -16,12 +16,8 @@ class UserProfile extends Model
      */
     protected $fillable = [
         'user_id',
-        'phone',
-        'address',
-        'city',
-        'postal_code',
-        'country',
-        'date_of_birth',
+        'budget',
+        'spent_this_month',
     ];
 
     /**
@@ -30,7 +26,8 @@ class UserProfile extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date_of_birth' => 'date',
+        'budget' => 'decimal:2',
+        'spent_this_month' => 'decimal:2',
     ];
 
     /**

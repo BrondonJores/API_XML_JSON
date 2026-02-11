@@ -1,9 +1,16 @@
-FROM php:8.1-fpm
+# Stage 1: Composer dependencies
+FROM composer:latest AS composer-stage
 
-# Définir le répertoire de travail
-WORKDIR /var/www/html
+WORKDIR /app
 
-# Installer les dépendances système
+COPY composer.json composer.lock* ./
+
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+
+# Stage 2: PHP 8.2 FPM
+FROM php:8.2-fpm
+
+# Installer les dependances systeme
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -13,35 +20,32 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    default-mysql-client
-
-# Nettoyer le cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    default-mysql-client \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installer les extensions PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Installer Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+WORKDIR /var/www/html
 
-# Copier les fichiers de l'application
-COPY . /var/www/html
+# Copier vendor depuis le stage composer
+COPY --from=composer-stage /app/vendor ./vendor
 
-# Installer les dépendances PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Copier tout le code
+COPY . .
 
-# Créer les répertoires nécessaires et définir les permissions
-RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
-    && mkdir -p /var/www/html/storage/logs \
-    && mkdir -p /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+# Creer les dossiers Laravel
+RUN mkdir -p storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache
 
-# Exposer le port 8000
-EXPOSE 8000
+# Permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Commande de démarrage
-CMD php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan serve --host=0.0.0.0 --port=8000
+EXPOSE 9000
+
+CMD ["php-fpm"]

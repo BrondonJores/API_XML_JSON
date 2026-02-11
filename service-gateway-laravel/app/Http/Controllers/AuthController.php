@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -20,27 +21,13 @@ class AuthController extends Controller
     /**
      * Inscription d'un nouvel utilisateur.
      *
-     * @param Request $request
+     * @param RegisterRequest $request
      * @return JsonResponse
      */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'is_admin' => 'boolean',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Erreur de validation',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
-            $result = $this->authService->register($request->all());
+            $result = $this->authService->register($request->validated());
 
             return response()->json([
                 'message' => 'Utilisateur créé avec succès',
@@ -57,25 +44,13 @@ class AuthController extends Controller
     /**
      * Connexion d'un utilisateur.
      *
-     * @param Request $request
+     * @param LoginRequest $request
      * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Erreur de validation',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
-            $result = $this->authService->login($request->only('email', 'password'));
+            $result = $this->authService->login($request->validated());
 
             return response()->json([
                 'message' => 'Connexion réussie',
