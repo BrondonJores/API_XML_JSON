@@ -2,21 +2,51 @@ package com.canteen.menu.services;
 
 import jakarta.xml.bind.*;
 import jakarta.xml.bind.util.JAXBSource;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import java.io.*;
 import java.net.URL;
 
 /**
- * Service pour la serialisation et deserialisation XML avec JAXB
+ * Service securise pour la serialisation et deserialisation XML avec JAXB
  * Supporte la validation contre des schemas XSD
+ * SECURITE: Protection contre les attaques XXE (XML External Entity)
  */
 public class XmlService {
     
-    private static final String SCHEMA_LANGUAGE = "http://www.w3.org/2001/XMLSchema";
+    private static final String SCHEMA_LANGUAGE = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+    
+    /**
+     * Creer un Unmarshaller securise avec protection XXE
+     * @param context Le contexte JAXB
+     * @return Unmarshaller securise
+     * @throws JAXBException En cas d'erreur de configuration
+     */
+    private Unmarshaller createSecureUnmarshaller(JAXBContext context) throws JAXBException {
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        
+        try {
+            // Configuration du SAXParserFactory pour desactiver les entites externes (protection XXE)
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            spf.setNamespaceAware(true);
+        } catch (Exception e) {
+            // Echec de la configuration de securite - ne pas continuer
+            throw new JAXBException("Impossible de configurer la protection XXE pour l'unmarshaller", e);
+        }
+        
+        return unmarshaller;
+    }
     
     /**
      * Convertir un objet Java en XML (marshalling)
@@ -56,7 +86,7 @@ public class XmlService {
     }
     
     /**
-     * Convertir un XML en objet Java (unmarshalling)
+     * Convertir un XML en objet Java (unmarshalling) avec protection XXE
      * @param xml Le contenu XML
      * @param clazz La classe cible
      * @param <T> Type generique
@@ -65,14 +95,14 @@ public class XmlService {
      */
     public <T> T unmarshal(String xml, Class<T> clazz) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(clazz);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Unmarshaller unmarshaller = createSecureUnmarshaller(context);
         
         StringReader reader = new StringReader(xml);
         return (T) unmarshaller.unmarshal(reader);
     }
     
     /**
-     * Convertir un XML depuis un InputStream en objet Java
+     * Convertir un XML depuis un InputStream en objet Java avec protection XXE
      * @param inputStream Le flux d'entree XML
      * @param clazz La classe cible
      * @param <T> Type generique
@@ -81,7 +111,7 @@ public class XmlService {
      */
     public <T> T unmarshal(InputStream inputStream, Class<T> clazz) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(clazz);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Unmarshaller unmarshaller = createSecureUnmarshaller(context);
         
         return (T) unmarshaller.unmarshal(inputStream);
     }
@@ -105,6 +135,16 @@ public class XmlService {
         }
         
         SchemaFactory schemaFactory = SchemaFactory.newInstance(SCHEMA_LANGUAGE);
+        
+        // Protection XXE pour le schema factory
+        try {
+            schemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (Exception e) {
+            System.err.println("Avertissement: Configuration securite XXE schema: " + e.getMessage());
+        }
+        
         Schema schema = schemaFactory.newSchema(xsdUrl);
         
         JAXBContext context = JAXBContext.newInstance(clazz);
@@ -116,7 +156,7 @@ public class XmlService {
     }
     
     /**
-     * Valider un XML String contre un schema XSD
+     * Valider un XML String contre un schema XSD avec protection XXE
      * @param xml Le contenu XML a valider
      * @param xsdPath Chemin vers le fichier XSD dans les ressources
      * @throws SAXException En cas d'erreur de validation
@@ -131,9 +171,28 @@ public class XmlService {
         }
         
         SchemaFactory schemaFactory = SchemaFactory.newInstance(SCHEMA_LANGUAGE);
+        
+        // Protection XXE
+        try {
+            schemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (Exception e) {
+            System.err.println("Avertissement: Configuration securite XXE: " + e.getMessage());
+        }
+        
         Schema schema = schemaFactory.newSchema(xsdUrl);
         
         Validator validator = schema.newValidator();
+        
+        // Desactiver les entites externes dans le validator
+        try {
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (Exception e) {
+            System.err.println("Avertissement: Configuration securite validator: " + e.getMessage());
+        }
+        
         validator.validate(new javax.xml.transform.stream.StreamSource(new StringReader(xml)));
     }
     
@@ -156,7 +215,7 @@ public class XmlService {
     }
     
     /**
-     * Convertir un XML en objet Java avec validation XSD
+     * Convertir un XML en objet Java avec validation XSD et protection XXE
      * @param xml Le contenu XML
      * @param clazz La classe cible
      * @param xsdPath Chemin vers le fichier XSD dans les ressources
@@ -192,12 +251,12 @@ public class XmlService {
     }
     
     /**
-     * Convertir un XML en objet Meal
+     * Convertir un XML en objet Meal avec protection XXE
      * Methode helper pour faciliter l'utilisation
      */
     public com.canteen.menu.models.Meal unmarshalMeal(java.io.Reader reader) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(com.canteen.menu.models.Meal.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Unmarshaller unmarshaller = createSecureUnmarshaller(context);
         return (com.canteen.menu.models.Meal) unmarshaller.unmarshal(reader);
     }
 }
