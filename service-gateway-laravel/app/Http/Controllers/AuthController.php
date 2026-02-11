@@ -11,6 +11,16 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     protected AuthService $authService;
+    
+    /**
+     * Regex pour validation du mot de passe
+     * - Au moins 12 caracteres
+     * - Au moins une majuscule
+     * - Au moins une minuscule
+     * - Au moins un chiffre
+     * - Au moins un caractere special parmi @$!%*?&#
+     */
+    private const PASSWORD_REGEX = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{12,}$/';
 
     public function __construct(AuthService $authService)
     {
@@ -33,7 +43,7 @@ class AuthController extends Controller
                 'string',
                 'min:12',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{12,}$/'
+                'regex:' . self::PASSWORD_REGEX
             ],
             'is_admin' => 'boolean',
         ], [

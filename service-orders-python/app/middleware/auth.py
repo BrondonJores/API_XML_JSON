@@ -42,7 +42,9 @@ def require_auth(f):
         except jwt.InvalidTokenError:
             return jsonify({'error': 'Token invalide'}), 401
         except Exception as e:
-            return jsonify({'error': f'Erreur d\'authentification: {str(e)}'}), 401
+            # Logger l'erreur pour le monitoring
+            current_app.logger.error(f'Erreur d\'authentification: {str(e)}')
+            return jsonify({'error': 'Erreur d\'authentification'}), 401
         
         return f(*args, **kwargs)
     

@@ -40,15 +40,9 @@ public class XmlService {
             spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             spf.setNamespaceAware(true);
-            
-            // Appliquer le parser securise au unmarshaller
-            unmarshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler",
-                    (char[] ch, int start, int length, boolean isAttVal, Writer out) -> {
-                        out.write(ch, start, length);
-                    });
         } catch (Exception e) {
-            // Si la configuration echoue, continuer avec l'unmarshaller par defaut
-            System.err.println("Avertissement: Configuration securite XXE partiellement appliquee: " + e.getMessage());
+            // Echec de la configuration de securite - ne pas continuer
+            throw new JAXBException("Impossible de configurer la protection XXE pour l'unmarshaller", e);
         }
         
         return unmarshaller;
