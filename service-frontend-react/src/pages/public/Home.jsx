@@ -5,6 +5,7 @@ import Button from '../../components/ui/Button'
 import MealCard from '../../components/menu/MealCard'
 import Loader from '../../components/ui/Loader'
 import StatsCard from '../../components/charts/StatsCard'
+import { TESTIMONIALS } from '../../utils/constants'
 import {
   RectangleStackIcon,
   RocketLaunchIcon,
@@ -204,21 +205,14 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <TestimonialCard
-              name="Marie Dupont"
-              rating={5}
-              comment="Des plats délicieux et une livraison ultra rapide ! Je recommande vivement ce restaurant."
-            />
-            <TestimonialCard
-              name="Jean Martin"
-              rating={5}
-              comment="Interface très intuitive et menu varié. C'est devenu mon restaurant préféré pour commander en ligne."
-            />
-            <TestimonialCard
-              name="Sophie Laurent"
-              rating={5}
-              comment="Qualité exceptionnelle, portions généreuses et service impeccable. Bravo à toute l'équipe !"
-            />
+            {TESTIMONIALS.map((testimonial, index) => (
+              <TestimonialCard
+                key={index}
+                name={testimonial.name}
+                rating={testimonial.rating}
+                comment={testimonial.comment}
+              />
+            ))}
           </div>
         </div>
       </section>
